@@ -1,103 +1,807 @@
-import Image from "next/image";
+"use client";
+import React, { useState } from "react";
+import { Plus, Trash2, Download, Eye } from "lucide-react";
 
-export default function Home() {
+interface LimbahItem {
+  id: string;
+  kodeLimbah: string;
+  namaLimbah: string;
+  jumlahKemasan: string;
+  totalBerat: string;
+  lokasiTPS: string;
+}
+
+interface FormData {
+  nomorBA: string;
+  hari: string;
+  tanggal: string;
+  pihak1Nama: string;
+  pihak1Unit: string;
+  pihak1Jabatan: string;
+  pihak2Nama: string;
+  pihak2Unit: string;
+  pihak2Jabatan: string;
+  limbahItems: LimbahItem[];
+}
+
+const LimbahB3Generator: React.FC = () => {
+  const [isPreview, setIsPreview] = useState(false);
+  const [formData, setFormData] = useState<FormData>({
+    nomorBA: "",
+    hari: "",
+    tanggal: "",
+    pihak1Nama: "Haerul HL.",
+    pihak1Unit: "Section of PROPER & CDM",
+    pihak1Jabatan: "Jr of Proper & CDM",
+    pihak2Nama: "",
+    pihak2Unit: "",
+    pihak2Jabatan: "",
+    limbahItems: [
+      {
+        id: "1",
+        kodeLimbah: "",
+        namaLimbah: "",
+        jumlahKemasan: "",
+        totalBerat: "",
+        lokasiTPS: "",
+      },
+    ],
+  });
+
+  const handleInputChange = (field: keyof FormData, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleLimbahItemChange = (
+    id: string,
+    field: keyof LimbahItem,
+    value: string
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      limbahItems: prev.limbahItems.map((item) =>
+        item.id === id ? { ...item, [field]: value } : item
+      ),
+    }));
+  };
+
+  const addLimbahItem = () => {
+    const newItem: LimbahItem = {
+      id: Date.now().toString(),
+      kodeLimbah: "",
+      namaLimbah: "",
+      jumlahKemasan: "",
+      totalBerat: "",
+      lokasiTPS: "",
+    };
+    setFormData((prev) => ({
+      ...prev,
+      limbahItems: [...prev.limbahItems, newItem],
+    }));
+  };
+
+  const removeLimbahItem = (id: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      limbahItems: prev.limbahItems.filter((item) => item.id !== id),
+    }));
+  };
+
+  const handlePrint = () => {
+    const printWindow = window.open("", "_blank");
+    if (printWindow) {
+      printWindow.document.write(generatePrintHTML());
+      printWindow.document.write(generatePrintHTML2());
+      printWindow.document.close();
+      printWindow.focus();
+
+    }
+  };
+
+  const generatePrintHTML = () => {
+    return `
+    <!DOCTYPE html>
+<html>
+<head>
+  <title>Berita Acara Limbah B3</title>
+  <style>
+    body { font-family: Arial, sans-serif; font-size: 12px; line-height: 1.4; margin: 20px; }
+   .header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.title-wrapper {
+  text-align: center;
+  flex: 1;
+}
+
+.title {
+  font-size: 78px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.subtitle {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.nomor {
+  margin-top: 10px;
+  font-size: 16px;
+}
+
+.logo {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.logo img {
+  height: 60px; /* atur sesuai kebutuhan */
+}
+
+    .logo img { width: 60px; height: 60px; object-fit: contain; margin-bottom: 10px; }
+    .title { font-weight: bold; font-size: 22px; margin-bottom: 5px; }
+    .subtitle { text-decoration: underline; font-size: 22px; }
+    .content { margin: 20px 0; }
+    .party { margin: 15px 0; }
+    .party-title { text-decoration: underline; font-weight: bold; margin-bottom: 10px; }
+    table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+    th, td { border: 1px solid black; padding: 6px; text-align: left; }
+    th { font-weight: bold; }
+    .signatures { display: flex; justify-content: space-between; margin-top: 40px; }
+    .signature { text-align: center; width: 200px; }
+    .signature-line { border-bottom: 1px solid black; margin: 40px 0 5px; height: 0; }
+    .approval { text-align: center; margin-top: 60px; }
+  </style>
+</head>
+<body>
+ <div class="header">
+  <div class="title-wrapper">
+    <div class="title">BERITA ACARA</div>
+    <div class="subtitle">SERAH TERIMA LIMBAH B3 (MASUK TPS)</div>
+    <div class="nomor">
+      No. ${formData.nomorBA || "....."}/BA/32.44/${formData.tanggal}
+    </div>
+  </div>
+  <div class="logo">
+    <img src="/logo.png" alt="Logo" />
+  </div>
+</div>
+
+  
+  <div class="content">
+    <p>Pada hari ${formData.hari || "........"}, Tanggal ${
+      formData.tanggal || "................."
+    } berlokasi di PT Semen Tonasa yang bertanda tangan dibawah ini adalah :</p>
+    
+    <div class="party">
+      <div class="party-title">PIHAK 1 : PENGELOLA TPS LB3</div>
+      <p>Nama : ${formData.pihak1Nama || "Haerul HL."}</p>
+      <p>Unit Kerja : ${formData.pihak1Unit || "Section of PROPER & CDM"}</p>
+      <p>Jabatan : ${formData.pihak1Jabatan || "Jr of Proper & CDM"}</p>
+    </div>
+    
+    <div class="party">
+      <div class="party-title">PIHAK 2 : PENGHASIL LIMBAH B3</div>
+      <p>Nama : ${formData.pihak2Nama || "..............."}</p>
+      <p>Unit Kerja : ${formData.pihak2Unit || "..............."}</p>
+      <p>Jabatan : ${formData.pihak2Jabatan || ".............."}</p>
+    </div>
+    
+    <p>Dengan ini <strong>PIHAK 2</strong> telah menyerahkan Limbah B3 Kepada <strong>PIHAK 1</strong> sebagai Pengelola TPS Limbah B3 (Seksi Proper & CDM) dengan Jenis Limbah antara lain :</p>
+    
+    <table>
+     <thead>
+  <tr>
+    <th style="background-color:#98A869;">No</th>
+    <th style="background-color:#98A869;">Kode Limbah</th>
+    <th style="background-color:#98A869;">Nama Limbah</th>
+    <th style="background-color:#98A869;">Jumlah Kemasan</th>
+    <th style="background-color:#98A869;">Total Berat (Kg)</th>
+    <th style="background-color:#98A869;">Lokasi TPS LB3</th>
+  </tr>
+</thead>
+
+      <tbody>
+        ${formData.limbahItems
+          .map(
+            (item, index) => `
+          <tr>
+            <td>${index + 1}</td>
+            <td>${item.kodeLimbah}</td>
+            <td>${item.namaLimbah}</td>
+            <td>${item.jumlahKemasan}</td>
+            <td>${item.totalBerat}</td>
+            <td>${item.lokasiTPS}</td>
+          </tr>
+        `
+          )
+          .join("")}
+      </tbody>
+    </table>
+    
+    <div class="signatures">
+      <div class="signature">
+        <div>Pengelola TPS LB3</div>
+        <div class="signature-line"></div>
+        <div><strong><u>${
+          (formData.pihak1Nama || "Haerul HL.").split(" ")[0]
+        }</u></strong></div>
+        <div>${formData.pihak1Jabatan || "Jr. of Proper & CDM"}</div>
+      </div>
+      <div class="signature">
+        <div>Penghasil LB3</div>
+        <div class="signature-line"></div>
+        <div>${formData.pihak2Nama}</div>
+        <div>${formData.pihak2Jabatan}</div>
+      </div>
+    </div>
+    
+    <div class="approval">
+      <div>Menyetujui</div>
+      <div style="margin-top: 60px; margin-bottom: 200px;">
+        <strong><u>Andi Mayundari</u></strong><br>
+        Mgr of Proper & CDM
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+
+    `;
+  };
+  const generatePrintHTML2 = () => {
+    return `
+    <!DOCTYPE html>
+<html>
+<head>
+  <title>Berita Acara Limbah B3</title>
+  <style>
+    body { font-family: Arial, sans-serif; font-size: 12px; line-height: 1.4; margin: 20px; }
+   .header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.title-wrapper {
+  text-align: center;
+  flex: 1;
+}
+
+.title {
+  font-size: 78px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.subtitle {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.nomor {
+  margin-top: 10px;
+  font-size: 16px;
+}
+
+.logo {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.logo img {
+  height: 60px; /* atur sesuai kebutuhan */
+}
+
+    .logo img { width: 60px; height: 60px; object-fit: contain; margin-bottom: 10px; }
+    .title { font-weight: bold; font-size: 22px; margin-bottom: 5px; }
+    .subtitle { text-decoration: underline; font-size: 22px; }
+    .content { margin: 20px 0; }
+    .party { margin: 15px 0; }
+    .party-title { text-decoration: underline; font-weight: bold; margin-bottom: 10px; }
+    table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+    th, td { border: 1px solid black; padding: 6px; text-align: left; }
+    th { font-weight: bold; }
+    .signatures { display: flex; justify-content: space-between; margin-top: 40px; }
+    .signature { text-align: center; width: 200px; }
+    .signature-line { border-bottom: 1px solid black; margin: 40px 0 5px; height: 0; }
+    .approval { text-align: center; margin-top: 60px; }
+  </style>
+</head>
+<body>
+ <div class="header">
+  <div class="title-wrapper">
+    <div class="title">BERITA ACARA</div>
+    <div class="subtitle">SERAH TERIMA LIMBAH B3 (KELUAR TPS)</div>
+    <div class="nomor">
+      No. ${formData.nomorBA || "....."}/BA/32.44/${formData.tanggal}
+    </div>
+  </div>
+  <div class="logo">
+    <img src="/logo.png" alt="Logo" />
+  </div>
+</div>
+
+  
+  <div class="content">
+    <p>Pada hari ${formData.hari || "........"}, Tanggal ${
+      formData.tanggal || "................."
+    } berlokasi di PT Semen Tonasa yang bertanda tangan dibawah ini adalah :</p>
+    
+    <div class="party">
+      <div class="party-title">PIHAK 1 : PENGELOLA TPS LB3</div>
+      <p>Nama : ${formData.pihak1Nama || "Haerul HL."}</p>
+      <p>Unit Kerja : ${formData.pihak1Unit || "Section of PROPER & CDM"}</p>
+      <p>Jabatan : ${formData.pihak1Jabatan || "Jr of Proper & CDM"}</p>
+    </div>
+    
+    <div class="party">
+      <div class="party-title">PIHAK 2 : PENGHASIL LIMBAH B3</div>
+      <p>Nama : ${formData.pihak2Nama || "..............."}</p>
+      <p>Unit Kerja : ${formData.pihak2Unit || "..............."}</p>
+      <p>Jabatan : ${formData.pihak2Jabatan || ".............."}</p>
+    </div>
+    
+    <p>Dengan ini <strong>PIHAK 2</strong> telah menyerahkan Limbah B3 Kepada <strong>PIHAK 1</strong> sebagai Pengelola TPS Limbah B3 (Seksi Proper & CDM) dengan Jenis Limbah antara lain :</p>
+    
+    <table>
+     <thead>
+  <tr>
+    <th style="background-color:#98A869;">No</th>
+    <th style="background-color:#98A869;">Kode Limbah</th>
+    <th style="background-color:#98A869;">Nama Limbah</th>
+    <th style="background-color:#98A869;">Jumlah Kemasan</th>
+    <th style="background-color:#98A869;">Total Berat (Kg)</th>
+    <th style="background-color:#98A869;">Lokasi TPS LB3</th>
+  </tr>
+</thead>
+
+      <tbody>
+        ${formData.limbahItems
+          .map(
+            (item, index) => `
+          <tr>
+            <td>${index + 1}</td>
+            <td>${item.kodeLimbah}</td>
+            <td>${item.namaLimbah}</td>
+            <td>${item.jumlahKemasan}</td>
+            <td>${item.totalBerat}</td>
+            <td>${item.lokasiTPS}</td>
+          </tr>
+        `
+          )
+          .join("")}
+      </tbody>
+    </table>
+    
+    <div class="signatures">
+      <div class="signature">
+        <div>Pengelola TPS LB3</div>
+        <div class="signature-line"></div>
+        <div><strong><u>${
+          (formData.pihak1Nama || "Haerul HL.").split(" ")[0]
+        }</u></strong></div>
+        <div>${formData.pihak1Jabatan || "Jr. of Proper & CDM"}</div>
+      </div>
+      <div class="signature">
+        <div>Penghasil LB3</div>
+        <div class="signature-line"></div>
+        <div>${formData.pihak2Nama}</div>
+        <div>${formData.pihak2Jabatan}</div>
+      </div>
+    </div>
+    
+    <div class="approval">
+      <div>Menyetujui</div>
+      <div style="margin-top: 60px;">
+        <strong><u>Andi Mayundari</u></strong><br>
+        Mgr of Proper & CDM
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+
+    `;
+  };
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="max-w-4xl mx-auto p-6 -white">
+      <div className="mb-6 flex justify-between items-center">
+        <h1 className="text-2xl font-bold">
+          Generator Berita Acara Limbah B3
+        </h1>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setIsPreview(!isPreview)}
+            className="flex items-center gap-2 px-4 py-2 -blue-500 text-white rounded hover:-blue-600"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            <Eye size={16} />
+            {isPreview ? "Edit" : "Preview"}
+          </button>
+          <button
+            onClick={handlePrint}
+            className="flex items-center gap-2 px-4 py-2 -green-500 text-white rounded hover:-green-600"
           >
-            Read our docs
-          </a>
+            <Download size={16} />
+            Print/Download
+          </button>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+      </div>
+
+      {!isPreview ? (
+        // Form Input
+        <div className="space-y-6">
+          {/* Header Information */}
+          <div className="-gray-50 p-4 rounded-lg">
+            <h2 className="text-lg font-semibold mb-4">Informasi Dokumen</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium  mb-1">
+                  Nomor BA
+                </label>
+                <input
+                  type="text"
+                  value={formData.nomorBA}
+                  onChange={(e) => handleInputChange("nomorBA", e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Contoh: 001"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium  mb-1">
+                  Hari
+                </label>
+                <input
+                  type="text"
+                  value={formData.hari}
+                  onChange={(e) => handleInputChange("hari", e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Contoh: Senin"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium  mb-1">
+                  Tanggal
+                </label>
+                <input
+                  type="text"
+                  value={formData.tanggal}
+                  onChange={(e) => handleInputChange("tanggal", e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Contoh: 15 September"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Pihak 2 Information */}
+          <div className="-gray-50 p-4 rounded-lg">
+            <h2 className="text-lg font-semibold mb-4">
+              Pihak 2 - Penghasil Limbah B3
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium  mb-1">
+                  Nama
+                </label>
+                <input
+                  type="text"
+                  value={formData.pihak2Nama}
+                  onChange={(e) =>
+                    handleInputChange("pihak2Nama", e.target.value)
+                  }
+                  className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium  mb-1">
+                  Unit Kerja
+                </label>
+                <input
+                  type="text"
+                  value={formData.pihak2Unit}
+                  onChange={(e) =>
+                    handleInputChange("pihak2Unit", e.target.value)
+                  }
+                  className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium  mb-1">
+                  Jabatan
+                </label>
+                <input
+                  type="text"
+                  value={formData.pihak2Jabatan}
+                  onChange={(e) =>
+                    handleInputChange("pihak2Jabatan", e.target.value)
+                  }
+                  className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Limbah Items */}
+          <div className="-gray-50 p-4 rounded-lg">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-semibold">Data Limbah B3</h2>
+              <button
+                onClick={addLimbahItem}
+                className="flex items-center gap-2 px-3 py-2 -blue-500 text-white rounded hover:-blue-600"
+              >
+                <Plus size={16} />
+                Tambah Item
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {formData.limbahItems.map((item, index) => (
+                <div key={item.id} className="-white p-4 rounded border">
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="font-medium">Item Limbah #{index + 1}</h3>
+                    {formData.limbahItems.length > 1 && (
+                      <button
+                        onClick={() => removeLimbahItem(item.id)}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3">
+                    <div>
+                      <label className="block text-sm font-medium  mb-1">
+                        Kode Limbah
+                      </label>
+                      <input
+                        type="text"
+                        value={item.kodeLimbah}
+                        onChange={(e) =>
+                          handleLimbahItemChange(
+                            item.id,
+                            "kodeLimbah",
+                            e.target.value
+                          )
+                        }
+                        className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium  mb-1">
+                        Nama Limbah
+                      </label>
+                      <input
+                        type="text"
+                        value={item.namaLimbah}
+                        onChange={(e) =>
+                          handleLimbahItemChange(
+                            item.id,
+                            "namaLimbah",
+                            e.target.value
+                          )
+                        }
+                        className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium  mb-1">
+                        Jumlah Kemasan
+                      </label>
+                      <input
+                        type="text"
+                        value={item.jumlahKemasan}
+                        onChange={(e) =>
+                          handleLimbahItemChange(
+                            item.id,
+                            "jumlahKemasan",
+                            e.target.value
+                          )
+                        }
+                        className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium  mb-1">
+                        Total Berat (Kg)
+                      </label>
+                      <input
+                        type="text"
+                        value={item.totalBerat}
+                        onChange={(e) =>
+                          handleLimbahItemChange(
+                            item.id,
+                            "totalBerat",
+                            e.target.value
+                          )
+                        }
+                        className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium  mb-1">
+                        Lokasi TPS LB3
+                      </label>
+                      <input
+                        type="text"
+                        value={item.lokasiTPS}
+                        onChange={(e) =>
+                          handleLimbahItemChange(
+                            item.id,
+                            "lokasiTPS",
+                            e.target.value
+                          )
+                        }
+                        className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : (
+        // Preview Document
+        <div
+          className="-white border border-gray-300 p-8 shadow-lg"
+          style={{
+            fontFamily: "Arial, sans-serif",
+            fontSize: "12px",
+            lineHeight: "1.4",
+          }}
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 -gray-200 mx-auto mb-2 flex items-center justify-center text-xs">
+              <img src="/logo.png" alt="" />
+            </div>
+            <div className="font-bold text-lg mb-1">BERITA ACARA</div>
+            <div className="underline text-sm mb-2">
+              SERAH TERIMA LIMBAH B3 (MASUK TPS)
+            </div>
+            <div className="text-sm">
+              No. {formData.nomorBA || "....."}/BA/32.44/..... - 2024
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="mb-6">
+            <p className="mb-4">
+              Pada hari {formData.hari || "........"}, Tanggal{" "}
+              {formData.tanggal || "................."} 2024 berlokasi di PT
+              Semen Tonasa yang bertanda tangan dibawah ini adalah :
+            </p>
+
+            {/* Pihak 1 */}
+            <div className="mb-4">
+              <div className="font-bold underline mb-2">
+                PIHAK 1 : PENGELOLA TPS LB3
+              </div>
+              <p className="mb-1">
+                Nama : {formData.pihak1Nama || "Haerul HL."}
+              </p>
+              <p className="mb-1">
+                Unit Kerja : {formData.pihak1Unit || "Section of PROPER & CDM"}
+              </p>
+              <p className="mb-1">
+                Jabatan : {formData.pihak1Jabatan || "Jr of Proper & CDM"}
+              </p>
+            </div>
+
+            {/* Pihak 2 */}
+            <div className="mb-4">
+              <div className="font-bold underline mb-2">
+                PIHAK 2 : PENGHASIL LIMBAH B3
+              </div>
+              <p className="mb-1">
+                Nama : {formData.pihak2Nama || "..............."}
+              </p>
+              <p className="mb-1">
+                Unit Kerja : {formData.pihak2Unit || "..............."}
+              </p>
+              <p className="mb-1">
+                Jabatan : {formData.pihak2Jabatan || ".............."}
+              </p>
+            </div>
+
+            <p className="mb-4">
+              Dengan ini <strong>PIHAK 2</strong> telah menyerahkan Limbah B3
+              Kepada <strong>PIHAK 1</strong> sebagai Pengelola TPS Limbah B3
+              (Seksi Proper & CDM) dengan Jenis Limbah antara lain :
+            </p>
+
+            {/* Table */}
+            <table className="w-full border-collapse mb-6">
+              <thead>
+                <tr>
+                  <th className="border border-black p-2 -gray-100">No</th>
+                  <th className="border border-black p-2 -gray-100">
+                    Kode Limbah
+                  </th>
+                  <th className="border border-black p-2 -gray-100">
+                    Nama Limbah
+                  </th>
+                  <th className="border border-black p-2 -gray-100">
+                    Jumlah Kemasan
+                  </th>
+                  <th className="border border-black p-2 -gray-100">
+                    Total Berat (Kg)
+                  </th>
+                  <th className="border border-black p-2 -gray-100">
+                    Lokasi TPS LB3
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {formData.limbahItems.map((item, index) => (
+                  <tr key={item.id}>
+                    <td className="border border-black p-2 text-center">
+                      {index + 1}
+                    </td>
+                    <td className="border border-black p-2">
+                      {item.kodeLimbah}
+                    </td>
+                    <td className="border border-black p-2">
+                      {item.namaLimbah}
+                    </td>
+                    <td className="border border-black p-2">
+                      {item.jumlahKemasan}
+                    </td>
+                    <td className="border border-black p-2">
+                      {item.totalBerat}
+                    </td>
+                    <td className="border border-black p-2">
+                      {item.lokasiTPS}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            {/* Signatures */}
+            <div className="flex justify-between mt-12">
+              <div className="text-center w-48">
+                <div className="mb-1">Pengelola TPS LB3</div>
+                <div className="h-16 mb-2"></div>
+                <div className="font-bold underline">
+                  {formData.pihak1Nama.split(" ")[0] || "Haerul"}
+                </div>
+                <div>{formData.pihak1Jabatan || "Jr. of Proper & CDM"}</div>
+              </div>
+              <div className="text-center w-48">
+                <div className="mb-1">Penghasil LB3</div>
+                <div className="h-16 mb-2"></div>
+                <div className="underline">.........................</div>
+                <div>...........................</div>
+              </div>
+            </div>
+
+            {/* Approval */}
+            <div className="text-center mt-12">
+              <div className="mb-16">Menyetujui</div>
+              <div className="font-bold underline">Andi Mayundari</div>
+              <div>Mgr of Proper & CDM</div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
-}
+};
+
+export default LimbahB3Generator;
