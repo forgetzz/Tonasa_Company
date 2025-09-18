@@ -267,7 +267,7 @@ const LimbahB3Generator: React.FC = () => {
           }
 
         <div class="signature-line"></div>
-        <div>${formData.pihak2Nama}</div>
+      <div><strong><u>${formData.pihak2Nama}</u></strong></div>
         <div>${formData.pihak2Jabatan}</div>
       </div>
     </div>
@@ -450,7 +450,7 @@ const LimbahB3Generator: React.FC = () => {
           }
 
         <div class="signature-line"></div>
-        <div>${formData.pihak2Nama}</div>
+<div><strong><u>${formData.pihak2Nama}</u></strong></div>
         <div>${formData.pihak2Jabatan}</div>
       </div>
     </div>
