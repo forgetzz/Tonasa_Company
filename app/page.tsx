@@ -655,7 +655,7 @@ const LimbahB3Generator: React.FC = () => {
               {formData.limbahItems.map((item, index) => (
                 <div key={item.id} className="-white p-4 rounded border">
                   <div className="flex justify-between items-center mb-3">
-                    <h3 className="font-medium">Item Limbah #{index + 1}</h3>
+                    <h3 className="font-medium">Item Limbah {index + 1}</h3>
                     {formData.limbahItems.length > 1 && (
                       <button
                         onClick={() => removeLimbahItem(item.id)}
