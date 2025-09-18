@@ -18,6 +18,7 @@ interface FormData {
   pihak1Nama: string;
   pihak1Unit: string;
   pihak1Jabatan: string;
+  pihak2TTD: string;
   pihak2Nama: string;
   pihak2Unit: string;
   pihak2Jabatan: string;
@@ -36,6 +37,7 @@ const LimbahB3Generator: React.FC = () => {
     pihak2Nama: "",
     pihak2Unit: "",
     pihak2Jabatan: "",
+    pihak2TTD: "",
     limbahItems: [
       {
         id: "1",
@@ -97,7 +99,6 @@ const LimbahB3Generator: React.FC = () => {
       printWindow.document.write(generatePrintHTML2());
       printWindow.document.close();
       printWindow.focus();
-
     }
   };
 
@@ -108,7 +109,7 @@ const LimbahB3Generator: React.FC = () => {
 <head>
   <title>Berita Acara Limbah B3</title>
   <style>
-    body { font-family: Arial, sans-serif; font-size: 12px; line-height: 1.4; margin: 20px; }
+    body { font-family: Arial; font-size: 12px; line-height: 1; margin: 20px ; padding: 30px; }
    .header {
   display: flex;
   justify-content: center;
@@ -149,6 +150,7 @@ const LimbahB3Generator: React.FC = () => {
 }
 
     .logo img { width: 60px; height: 60px; object-fit: contain; margin-bottom: 10px; }
+    .logo2 img { width: 100px; height:100px; object-fit: contain; margin-bottom: -50px; }
     .title { font-weight: bold; font-size: 22px; margin-bottom: 5px; }
     .subtitle { text-decoration: underline; font-size: 22px; }
     .content { margin: 20px 0; }
@@ -161,6 +163,18 @@ const LimbahB3Generator: React.FC = () => {
     .signature { text-align: center; width: 200px; }
     .signature-line { border-bottom: 1px solid black; margin: 40px 0 5px; height: 0; }
     .approval { text-align: center; margin-top: 60px; }
+    .parties {
+  display: flex;
+  flex-direction: column;
+  margin-left: 100px;
+  justify-content: center; /* biar ketemu di tengah */
+  gap: 5px; /* jarak antar pihak biar gak dempetan */
+}
+
+.party {
+  width: 250px;
+}
+
   </style>
 </head>
 <body>
@@ -181,22 +195,24 @@ const LimbahB3Generator: React.FC = () => {
   <div class="content">
     <p>Pada hari ${formData.hari || "........"}, Tanggal ${
       formData.tanggal || "................."
-    } berlokasi di PT Semen Tonasa yang bertanda tangan dibawah ini adalah :</p>
+    } berlokasi di PT Semen Tonasa yang bertanda </br> tangan dibawah ini adalah :</p>
     
-    <div class="party">
-      <div class="party-title">PIHAK 1 : PENGELOLA TPS LB3</div>
-      <p>Nama : ${formData.pihak1Nama || "Haerul HL."}</p>
-      <p>Unit Kerja : ${formData.pihak1Unit || "Section of PROPER & CDM"}</p>
-      <p>Jabatan : ${formData.pihak1Jabatan || "Jr of Proper & CDM"}</p>
-    </div>
-    
-    <div class="party">
-      <div class="party-title">PIHAK 2 : PENGHASIL LIMBAH B3</div>
-      <p>Nama : ${formData.pihak2Nama || "..............."}</p>
-      <p>Unit Kerja : ${formData.pihak2Unit || "..............."}</p>
-      <p>Jabatan : ${formData.pihak2Jabatan || ".............."}</p>
-    </div>
-    
+  <div class="parties">
+  <div class="party">
+    <div class="party-title">PIHAK 1 : PENGELOLA TPS LB3</div>
+    <p>Nama : ${formData.pihak1Nama || "Haerul HL."}</p>
+    <p>Unit Kerja : ${formData.pihak1Unit || "Section of PROPER & CDM"}</p>
+    <p>Jabatan : ${formData.pihak1Jabatan || "Jr of Proper & CDM"}</p>
+  </div>
+  
+  <div class="party">
+    <div class="party-title">PIHAK 2 : PENGHASIL LIMBAH B3</div>
+    <p>Nama : ${formData.pihak2Nama || "..............."}</p>
+    <p>Unit Kerja : ${formData.pihak2Unit || "..............."}</p>
+    <p>Jabatan : ${formData.pihak2Jabatan || ".............."}</p>
+  </div>
+</div>
+
     <p>Dengan ini <strong>PIHAK 2</strong> telah menyerahkan Limbah B3 Kepada <strong>PIHAK 1</strong> sebagai Pengelola TPS Limbah B3 (Seksi Proper & CDM) dengan Jenis Limbah antara lain :</p>
     
     <table>
@@ -232,14 +248,24 @@ const LimbahB3Generator: React.FC = () => {
     <div class="signatures">
       <div class="signature">
         <div>Pengelola TPS LB3</div>
-        <div class="signature-line"></div>
+          <div class="logo2">
+    <img src="/ttd.png" alt="Logo" />
+           </div>
+        <div class="signature-line"> </div>
         <div><strong><u>${
           (formData.pihak1Nama || "Haerul HL.").split(" ")[0]
         }</u></strong></div>
         <div>${formData.pihak1Jabatan || "Jr. of Proper & CDM"}</div>
       </div>
       <div class="signature">
+    
         <div>Penghasil LB3</div>
+          ${
+            formData.pihak2TTD
+              ? `<img src="${formData.pihak2TTD}" alt="Tanda Tangan Pihak 2" style="height:60px; margin-top: 30px; margin-bottom: -30px; " />`
+              : ""
+          }
+
         <div class="signature-line"></div>
         <div>${formData.pihak2Nama}</div>
         <div>${formData.pihak2Jabatan}</div>
@@ -266,7 +292,7 @@ const LimbahB3Generator: React.FC = () => {
 <head>
   <title>Berita Acara Limbah B3</title>
   <style>
-    body { font-family: Arial, sans-serif; font-size: 12px; line-height: 1.4; margin: 20px; }
+    body { font-family: Arial; font-size: 12px; line-height: 1; margin: 20px ; padding: 30px; }
    .header {
   display: flex;
   justify-content: center;
@@ -307,6 +333,7 @@ const LimbahB3Generator: React.FC = () => {
 }
 
     .logo img { width: 60px; height: 60px; object-fit: contain; margin-bottom: 10px; }
+    .logo2 img { width: 100px; height:100px; object-fit: contain; margin-bottom: -50px; }
     .title { font-weight: bold; font-size: 22px; margin-bottom: 5px; }
     .subtitle { text-decoration: underline; font-size: 22px; }
     .content { margin: 20px 0; }
@@ -319,6 +346,18 @@ const LimbahB3Generator: React.FC = () => {
     .signature { text-align: center; width: 200px; }
     .signature-line { border-bottom: 1px solid black; margin: 40px 0 5px; height: 0; }
     .approval { text-align: center; margin-top: 60px; }
+    .parties {
+  display: flex;
+  flex-direction: column;
+  margin-left: 100px;
+  justify-content: center; /* biar ketemu di tengah */
+  gap: 5px; /* jarak antar pihak biar gak dempetan */
+}
+
+.party {
+  width: 250px;
+}
+
   </style>
 </head>
 <body>
@@ -339,22 +378,24 @@ const LimbahB3Generator: React.FC = () => {
   <div class="content">
     <p>Pada hari ${formData.hari || "........"}, Tanggal ${
       formData.tanggal || "................."
-    } berlokasi di PT Semen Tonasa yang bertanda tangan dibawah ini adalah :</p>
+    } berlokasi di PT Semen Tonasa yang bertanda </br> tangan dibawah ini adalah :</p>
     
-    <div class="party">
-      <div class="party-title">PIHAK 1 : PENGELOLA TPS LB3</div>
-      <p>Nama : ${formData.pihak1Nama || "Haerul HL."}</p>
-      <p>Unit Kerja : ${formData.pihak1Unit || "Section of PROPER & CDM"}</p>
-      <p>Jabatan : ${formData.pihak1Jabatan || "Jr of Proper & CDM"}</p>
-    </div>
-    
-    <div class="party">
-      <div class="party-title">PIHAK 2 : PENGHASIL LIMBAH B3</div>
-      <p>Nama : ${formData.pihak2Nama || "..............."}</p>
-      <p>Unit Kerja : ${formData.pihak2Unit || "..............."}</p>
-      <p>Jabatan : ${formData.pihak2Jabatan || ".............."}</p>
-    </div>
-    
+  <div class="parties">
+  <div class="party">
+    <div class="party-title">PIHAK 1 : PENGELOLA TPS LB3</div>
+    <p>Nama : ${formData.pihak1Nama || "Haerul HL."}</p>
+    <p>Unit Kerja : ${formData.pihak1Unit || "Section of PROPER & CDM"}</p>
+    <p>Jabatan : ${formData.pihak1Jabatan || "Jr of Proper & CDM"}</p>
+  </div>
+  
+  <div class="party">
+    <div class="party-title">PIHAK 2 : PENGHASIL LIMBAH B3</div>
+    <p>Nama : ${formData.pihak2Nama || "..............."}</p>
+    <p>Unit Kerja : ${formData.pihak2Unit || "..............."}</p>
+    <p>Jabatan : ${formData.pihak2Jabatan || ".............."}</p>
+  </div>
+</div>
+
     <p>Dengan ini <strong>PIHAK 2</strong> telah menyerahkan Limbah B3 Kepada <strong>PIHAK 1</strong> sebagai Pengelola TPS Limbah B3 (Seksi Proper & CDM) dengan Jenis Limbah antara lain :</p>
     
     <table>
@@ -390,14 +431,24 @@ const LimbahB3Generator: React.FC = () => {
     <div class="signatures">
       <div class="signature">
         <div>Pengelola TPS LB3</div>
-        <div class="signature-line"></div>
+          <div class="logo2">
+    <img src="/ttd.png" alt="Logo" />
+           </div>
+        <div class="signature-line"> </div>
         <div><strong><u>${
           (formData.pihak1Nama || "Haerul HL.").split(" ")[0]
         }</u></strong></div>
         <div>${formData.pihak1Jabatan || "Jr. of Proper & CDM"}</div>
       </div>
       <div class="signature">
+    
         <div>Penghasil LB3</div>
+          ${
+            formData.pihak2TTD
+              ? `<img src="${formData.pihak2TTD}" alt="Tanda Tangan Pihak 2" style="height:60px; margin-top: 30px; margin-bottom: -30px; " />`
+              : ""
+          }
+
         <div class="signature-line"></div>
         <div>${formData.pihak2Nama}</div>
         <div>${formData.pihak2Jabatan}</div>
@@ -406,7 +457,7 @@ const LimbahB3Generator: React.FC = () => {
     
     <div class="approval">
       <div>Menyetujui</div>
-      <div style="margin-top: 60px;">
+      <div style="margin-top: 60px; ">
         <strong><u>Andi Mayundari</u></strong><br>
         Mgr of Proper & CDM
       </div>
@@ -421,17 +472,15 @@ const LimbahB3Generator: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto p-6 -white">
       <div className="mb-6 flex justify-between items-center">
-        <h1 className="text-2xl font-bold">
-          Generator Berita Acara Limbah B3
-        </h1>
+        <h1 className="text-2xl font-bold">Generator Berita Acara Limbah B3</h1>
         <div className="flex gap-2">
-          <button
+          {/* <button
             onClick={() => setIsPreview(!isPreview)}
             className="flex items-center gap-2 px-4 py-2 -blue-500 text-white rounded hover:-blue-600"
           >
             <Eye size={16} />
             {isPreview ? "Edit" : "Preview"}
-          </button>
+          </button> */}
           <button
             onClick={handlePrint}
             className="flex items-center gap-2 px-4 py-2 -green-500 text-white rounded hover:-green-600"
@@ -462,9 +511,7 @@ const LimbahB3Generator: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium  mb-1">
-                  Hari
-                </label>
+                <label className="block text-sm font-medium  mb-1">Hari</label>
                 <input
                   type="text"
                   value={formData.hari}
@@ -482,7 +529,7 @@ const LimbahB3Generator: React.FC = () => {
                   value={formData.tanggal}
                   onChange={(e) => handleInputChange("tanggal", e.target.value)}
                   className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Contoh: 15 September"
+                  placeholder="Contoh: 15-09-2025"
                 />
               </div>
             </div>
@@ -495,9 +542,7 @@ const LimbahB3Generator: React.FC = () => {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium  mb-1">
-                  Nama
-                </label>
+                <label className="block text-sm font-medium  mb-1">Nama</label>
                 <input
                   type="text"
                   value={formData.pihak2Nama}
@@ -532,6 +577,63 @@ const LimbahB3Generator: React.FC = () => {
                   }
                   className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
+              </div>
+              <div className="p-4 border-2 border-dashed border-gray-300 rounded-xl text-center hover:border-blue-500 transition">
+                <label
+                  htmlFor="ttd-upload"
+                  className="cursor-pointer flex flex-col items-center gap-2"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-8 w-8 text-gray-500"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 8l-3-3m3 3l3-3"
+                    />
+                  </svg>
+                  <span className="text-gray-600 font-medium">
+                    Klik untuk upload tanda tangan
+                  </span>
+                  <span className="text-xs text-gray-400">
+                    Format: JPG / PNG
+                  </span>
+                </label>
+
+                <input
+                  id="ttd-upload"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+
+                    const url = URL.createObjectURL(file);
+
+                    setFormData((prev) => ({
+                      ...prev,
+                      pihak2TTD: url,
+                    }));
+
+                    localStorage.setItem("ttd", url);
+                  }}
+                />
+
+                {formData.pihak2TTD && (
+                  <div className="mt-4">
+                    <img
+                      src={formData.pihak2TTD}
+                      alt="Tanda Tangan Preview"
+                      className="mx-auto h-20 rounded border border-gray-300 shadow-sm bg-white p-1"
+                    />
+                  </div>
+                )}
               </div>
             </div>
           </div>
