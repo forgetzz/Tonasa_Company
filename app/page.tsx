@@ -109,7 +109,7 @@ const LimbahB3Generator: React.FC = () => {
 <head>
   <title>Berita Acara Limbah B3</title>
   <style>
-    body { font-family: Arial; font-size: 12px; line-height: 1; margin: 20px ; padding: 30px; }
+    body { font-family: Arial; font-size: 12px; line-height: 1.4; margin: 20px ; padding: 30px; }
    .header {
   display: flex;
   justify-content: center;
@@ -292,7 +292,7 @@ const LimbahB3Generator: React.FC = () => {
 <head>
   <title>Berita Acara Limbah B3</title>
   <style>
-    body { font-family: Arial; font-size: 12px; line-height: 1; margin: 20px ; padding: 30px; }
+    body { font-family: Arial; font-size: 12px; line-height: 1.4; margin: 20px ; padding: 30px; }
    .header {
   display: flex;
   justify-content: center;
