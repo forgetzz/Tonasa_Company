@@ -483,7 +483,7 @@ const LimbahB3Generator: React.FC = () => {
           </button> */}
           <button
             onClick={handlePrint}
-            className="flex items-center gap-2 px-4 py-2 -green-500 text-white rounded hover:-green-600"
+            className="flex items-center gap-2 px-4 py-2 "
           >
             <Download size={16} />
             Print/Download
