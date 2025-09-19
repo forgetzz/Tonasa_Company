@@ -529,7 +529,7 @@ const LimbahB3Generator: React.FC = () => {
                   value={formData.tanggal}
                   onChange={(e) => handleInputChange("tanggal", e.target.value)}
                   className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Contoh: 15-09-2025"
+                  placeholder="Contoh: 15-September-2025"
                 />
               </div>
             </div>
